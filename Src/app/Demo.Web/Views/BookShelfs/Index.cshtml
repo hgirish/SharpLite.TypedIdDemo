@@ -1,0 +1,15 @@
+﻿@model List<Demo.Domain.BookShelf>
+
+@{
+  ViewBag.Title = "Bookshelf";
+
+}
+
+<h2>BookShelf</h2>
+@Html.ActionLink("Create New","Create")
+<ul>
+@foreach(var item in Model)
+{
+  <li>@item.BookName - @item.Id</li>
+}
+</ul>
