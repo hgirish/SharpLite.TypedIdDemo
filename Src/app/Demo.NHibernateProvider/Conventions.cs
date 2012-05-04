@@ -21,15 +21,13 @@ namespace Demo.NHibernateProvider
     internal static class Conventions
     {
         public static void WithConventions(this ConventionModelMapper mapper, Configuration configuration) {
-            Type baseEntityType = typeof(Entity);
-            Type baseEntityTypeWithId = typeof(EntityWithTypedId<Guid>);
-
-           mapper.IsEntity((type, declared) => IsEntity(type));
-
+          mapper.IsEntity((type, declared) => IsEntity(type));
+           
 
        //     mapper.IsRootEntity((type, declared) => baseEntityType.Equals(type.BaseType));
             mapper.IsRootEntity((type, declared)
-                => (baseEntityType.Equals(type.BaseType) || baseEntityTypeWithId.Equals(type.BaseType)));
+                => (type.BaseType == typeof(Entity)
+                ||type.BaseType  == typeof(EntityWithTypedId<Guid>) ));
 
             mapper.BeforeMapClass += (modelInspector, type, classCustomizer) => {
                 classCustomizer.Id(c => c.Column("Id"));
@@ -60,15 +58,24 @@ namespace Demo.NHibernateProvider
         //{
         //  return typeof(Entity).IsAssignableFrom(type) && typeof(Entity) != type && !type.IsInterface;
         //}
-        public static bool IsEntity(Type type)
+
+        public static   bool IsEntity(Type type)
         {
-          var valid = (typeof(Entity).IsAssignableFrom(type)
-          && typeof(Entity) != type
-          || typeof(EntityWithTypedId<Guid>).IsAssignableFrom(type)
-          && typeof(EntityWithTypedId<Guid>) != type)
-          && !type.IsInterface;
-          return valid;
+          return type.GetInterfaces().Any(x => 
+          x.IsGenericType 
+          && x.GetGenericTypeDefinition() == typeof(IEntityWithTypedId<>));
+
         }
+
+        //public static bool IsEntity(Type type)
+        //{
+        //  var valid = (typeof(Entity).IsAssignableFrom(type)
+        //  && typeof(Entity) != type
+        //  || typeof(EntityWithTypedId<Guid>).IsAssignableFrom(type)
+        //  && typeof(EntityWithTypedId<Guid>) != type)
+        //  && !type.IsInterface;
+        //  return valid;
+        //}
         /// <summary>
         /// Looks through this assembly for any IOverride classes.  If found, it creates an instance
         /// of each and invokes the Override(mapper) method, accordingly.
