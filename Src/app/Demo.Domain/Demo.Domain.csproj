@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="ActionConfirmation.cs" />
     <Compile Include="BookShelf.cs" />
+    <Compile Include="Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validators\DataAnnotationsValidator.cs" />
   </ItemGroup>
